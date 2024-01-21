@@ -17,7 +17,7 @@ class dbService {
       "user": AuthService.user?.uid,
       "title": exam,
       "day": date.day,
-      "month": date.day,
+      "month": date.month,
       "year": date.year,
       "minute": time.minute,
       "hour": time.hour,

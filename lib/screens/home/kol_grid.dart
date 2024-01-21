@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:lab3/services/db_service.dart';
 
@@ -27,12 +28,24 @@ class kol_gridState extends State<kol_grid> {
     examList = _db.getExams();
 
     rExamList = await _db.getExams();
+
+    rExamList?.forEach((element) {
+      print(element);
+      DateTime current = DateTime(element.year, element.month, element.day,
+          element.hour, element.minute);
+
+      final event = CalendarEventData(title: element.title, date: current);
+      if (!context.mounted) {
+        return;
+      }
+      CalendarControllerProvider.of(context).controller.add(event);
+
+
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-
-
     return FutureBuilder(
         future: examList,
         builder: (BuildContext context, AsyncSnapshot<List<Exam>> snapshot) {
@@ -40,7 +53,6 @@ class kol_gridState extends State<kol_grid> {
             case ConnectionState.waiting:
               return const Center(child: CircularProgressIndicator());
             case ConnectionState.done:
-
               return GridView.builder(
                 padding: const EdgeInsets.all(8.0),
                 itemCount: snapshot.data?.length,
