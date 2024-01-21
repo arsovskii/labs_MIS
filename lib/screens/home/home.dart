@@ -1,13 +1,33 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:lab3/screens/home/kol_grid.dart';
 import 'package:lab3/screens/modals/calendar.dart';
 import 'package:lab3/screens/modals/kol_add.dart';
+import 'package:permission_handler/permission_handler.dart';
 
+import '../../localNotifications/Noti.dart';
 import '../../services/auth_service.dart';
 
-class Home extends StatelessWidget {
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+class Home extends StatefulWidget {
   const Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    Noti.initialize(flutterLocalNotificationsPlugin);
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,11 +37,10 @@ class Home extends StatelessWidget {
         backgroundColor: Colors.blueAccent,
         elevation: 0.0,
         actions: [
+
           IconButton(
             icon: const Icon(Icons.calendar_today),
-            onPressed: () => {
-              Navigator.push(context, _createRouteCalendar())
-            },
+            onPressed: () => {Navigator.push(context, _createRouteCalendar())},
           ),
           IconButton(
             icon: const Icon(Icons.add),
@@ -51,7 +70,7 @@ class Home extends StatelessWidget {
         const curve = Curves.ease;
 
         var tween =
-        Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
         return SlideTransition(
           position: animation.drive(tween),

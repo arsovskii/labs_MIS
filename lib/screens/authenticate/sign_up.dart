@@ -87,7 +87,7 @@ class _SignUpState extends State<SignUp> {
                                       toastification.show(
                                         type: ToastificationType.info,
                                         context: context,
-                                        title: 'Please verify your email address!',
+                                        title: Text('Please verify your email address!'),
                                         autoCloseDuration:
                                             const Duration(seconds: 5),
                                       ),

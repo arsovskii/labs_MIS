@@ -81,7 +81,7 @@ class _kol_modalState extends State<kol_modal> {
                   toastification.show(
                     type: ToastificationType.error,
                     context: context,
-                    title: 'Please fill out the form',
+                    title: Text('Please fill out the form'),
                     autoCloseDuration: const Duration(seconds: 2),
                   );
                   return;

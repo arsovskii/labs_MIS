@@ -2,8 +2,11 @@ import 'dart:math';
 
 import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:lab3/screens/home/home.dart';
 import 'package:lab3/services/db_service.dart';
 
+import '../../localNotifications/Noti.dart';
 import '../../model/exam.dart';
 
 class kol_grid extends StatefulWidget {
@@ -38,9 +41,20 @@ class kol_gridState extends State<kol_grid> {
       if (!context.mounted) {
         return;
       }
-      CalendarControllerProvider.of(context).controller.add(event);
+      print("dodavam events vo kalendaro");
+      CalendarControllerProvider
+          .of(context)
+          .controller
+          .add(event);
 
-
+      Noti.showFutureNotif(
+          element.title,
+          "${element.hour} : ${element.minute}",
+          element.year,
+          element.month,
+          element.day,
+          element.hour,
+          element.minute);
     });
   }
 
@@ -66,7 +80,7 @@ class kol_gridState extends State<kol_grid> {
                           children: [
                             Text('${snapshot.data?[index].title}',
                                 style: const TextStyle(
-                                    fontSize: 64,
+                                    fontSize: 50,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black)),
                             Padding(
@@ -75,13 +89,16 @@ class kol_gridState extends State<kol_grid> {
                                 child: Column(
                                   children: [
                                     Text(
-                                      '${snapshot.data?[index].day}/${snapshot.data?[index].month}/${snapshot.data?[index].year}',
+                                      '${snapshot.data?[index].day}/${snapshot
+                                          .data?[index].month}/${snapshot
+                                          .data?[index].year}',
                                       style: TextStyle(
                                           fontSize: 30,
                                           color: Colors.blueGrey.shade400),
                                     ),
                                     Text(
-                                      '${snapshot.data?[index].hour}:${snapshot.data?[index].minute}',
+                                      '${snapshot.data?[index].hour}:${snapshot
+                                          .data?[index].minute}',
                                       style: TextStyle(
                                           fontSize: 30,
                                           color: Colors.blueGrey.shade400),
