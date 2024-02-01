@@ -8,9 +8,12 @@ class Exam {
   final int year;
   final int hour;
   final int minute;
+  final double long;
+  final double lat;
+
 
   Exam(this.title, this.user, this.day, this.month, this.year, this.hour,
-      this.minute);
+      this.minute, this.long, this.lat);
 
   factory Exam.fromDocument(DocumentSnapshot document) {
     print(document.id);
@@ -22,6 +25,8 @@ class Exam {
       document['year'],
       document['hour'],
       document['minute'],
+      document['long'],
+      document['lat'],
     );
   }
 
@@ -33,6 +38,8 @@ class Exam {
     'year':year,
     'hour':hour,
     'minute':minute,
+    'lat':lat,
+    'long':long,
 
   };
 }

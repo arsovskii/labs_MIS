@@ -5,12 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:lab3/screens/home/home.dart';
 import 'package:lab3/services/db_service.dart';
+import 'package:location/location.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../localNotifications/Noti.dart';
 import '../../model/exam.dart';
+import '../modals/map.dart';
 
 class kol_grid extends StatefulWidget {
-  const kol_grid({super.key});
+  final Function(List<List<double>>) getLocations;
+
+  const kol_grid(this.getLocations, {super.key});
 
   @override
   State<kol_grid> createState() => kol_gridState();
@@ -20,6 +25,7 @@ class kol_gridState extends State<kol_grid> {
   final _db = dbService();
   Future<List<Exam>>? examList;
   List<Exam>? rExamList;
+  List<List<double>> listLocations = [];
 
   @override
   void initState() {
@@ -42,10 +48,7 @@ class kol_gridState extends State<kol_grid> {
         return;
       }
       print("dodavam events vo kalendaro");
-      CalendarControllerProvider
-          .of(context)
-          .controller
-          .add(event);
+      CalendarControllerProvider.of(context).controller.add(event);
 
       Noti.showFutureNotif(
           element.title,
@@ -56,6 +59,15 @@ class kol_gridState extends State<kol_grid> {
           element.hour,
           element.minute);
     });
+
+    setupLocations();
+  }
+
+  void setupLocations() {
+    rExamList?.forEach((element) {
+      listLocations.add([element.lat, element.long]);
+    });
+    widget.getLocations(listLocations);
   }
 
   @override
@@ -74,7 +86,7 @@ class kol_gridState extends State<kol_grid> {
                   return GridTile(
                     child: SizedBox(
                       child: Card(
-                        margin: const EdgeInsets.all(20.0),
+                        margin: const EdgeInsets.all(10.0),
                         elevation: 10.0,
                         child: Column(
                           children: [
@@ -89,19 +101,42 @@ class kol_gridState extends State<kol_grid> {
                                 child: Column(
                                   children: [
                                     Text(
-                                      '${snapshot.data?[index].day}/${snapshot
-                                          .data?[index].month}/${snapshot
-                                          .data?[index].year}',
+                                      '${snapshot.data?[index].day}/${snapshot.data?[index].month}/${snapshot.data?[index].year}',
                                       style: TextStyle(
-                                          fontSize: 30,
+                                          fontSize: 24,
                                           color: Colors.blueGrey.shade400),
                                     ),
                                     Text(
-                                      '${snapshot.data?[index].hour}:${snapshot
-                                          .data?[index].minute}',
+                                      '${snapshot.data?[index].hour}:${snapshot.data?[index].minute}',
                                       style: TextStyle(
-                                          fontSize: 30,
+                                          fontSize: 24,
                                           color: Colors.blueGrey.shade400),
+                                    ),
+                                    TextButton(
+                                      child: Text(
+                                          '${snapshot.data?[index].lat} : ${snapshot.data?[index].long}'),
+                                      onPressed: () async {
+                                        // Navigator.of(context).push(
+                                        //   MaterialPageRoute(
+                                        //     builder: (context) => GMap.location(lat:snapshot.data![index].lat,long:snapshot.data![index].long),
+                                        //   ),
+                                        // ),
+                                        await GMapState.getLocation();
+                                        LocationData currentPosition =GMapState.locationData;
+
+                                        String origin =
+                                            '${currentPosition.latitude},${currentPosition.longitude}';
+                                        String destination =
+                                            '${snapshot.data?[index].lat},${snapshot.data?[index].long}';
+
+                                        final Uri _url = Uri.parse(
+                                            'https://www.google.com/maps/dir/?api=1&origin=$origin&destination=$destination&travelmode=driving&dir_action=navigate');
+
+                                        await launchUrl(
+                                          _url,
+                                          mode: LaunchMode.externalApplication,
+                                        );
+                                      },
                                     ),
                                   ],
                                 ),

@@ -1,14 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart'
     show FieldValue, FirebaseFirestore, QuerySnapshot;
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lab3/services/auth_service.dart';
+import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
 
 import '../model/exam.dart';
 
 class dbService {
   final firestore = FirebaseFirestore.instance;
 
-  void addExam(String exam, DateTime date, TimeOfDay time) async {
+  void addExam(String exam, DateTime date, TimeOfDay time, LatLong location) async {
     if(AuthService.user == null){
       return;
     }
@@ -21,6 +23,8 @@ class dbService {
       "year": date.year,
       "minute": time.minute,
       "hour": time.hour,
+      "lat": location.latitude,
+      "long":location.longitude,
     };
 
     await firestore.collection("exams").add(toAdd);
@@ -37,6 +41,7 @@ class dbService {
         .map((docSnapshot) => Exam.fromDocument(docSnapshot))
         .toList();
 
-
   }
+
+
 }
